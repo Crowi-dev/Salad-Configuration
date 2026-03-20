@@ -21,3 +21,18 @@ export interface Ingredient extends BaseType {
     diets: String[];
     weight_grams?: number;
 }
+export interface User {
+    id: number;
+    email: String;
+    name?: String;
+    role?: String;
+}
+export interface Recipe {
+    id: number;
+    userId: number;
+    name: String;
+    bowlId: number;
+    ingredientIds: number[];
+    slots?: Record<string, Ingredient | null>;
+    is_public?: boolean;
+}
