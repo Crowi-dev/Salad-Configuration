@@ -1,6 +1,7 @@
-import Header from "./components/Header";
-import BowlSelection from "./components/BowlSelection";
-import BaseSelection from "./components/BaseSelection";
+import Header from "./Components/Header";
+import BowlSelection from "./Components/BowlSelection";
+import BaseSelection from "./Components/BaseSelection";
+import CenterBowl from "./Components/CenterBowl"; 
 
 function App() {
   return (
@@ -9,6 +10,7 @@ function App() {
       <div className="p-8 flex flex-col lg:flex-row gap-8 justify-center items-start">
         <BowlSelection />
         <BaseSelection /> 
+        <CenterBowl />
       </div>
     </div>
   );
