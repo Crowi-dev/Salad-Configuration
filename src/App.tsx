@@ -1,26 +1,7 @@
 import Header from "./Components/Header";
-import Footer from "./Components/Footer";
-
-function App() {
-  return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-
-      <main className="flex-grow">
-        {/* Your page content will go here */}
-      </main>
-
-      <Footer />
-    </div>
-  );
-}
-
-export default App;
-
-
-import React from "react";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import BowlSelection from "./Components/BowlSelection";
+import BaseSelection from "./Components/BaseSelection";
+import CenterBowl from "./Components/CenterBowl"; 
 
 function App() {
   return (
@@ -28,15 +9,11 @@ function App() {
       
       {/* Header at top */}
       <Header />
-
-      {/* Main content */}
-      <main className="flex-1 max-w-6xl w-full mx-auto p-6 flex flex-col gap-8 mt-4">
-        {/* Your page content goes here */}
-      </main>
-
-      {/* Footer at bottom */}
-      <Footer />
-
+      <div className="p-8 flex flex-col lg:flex-row gap-8 justify-center items-start">
+        <BowlSelection />
+        <BaseSelection /> 
+        <CenterBowl />
+      </div>
     </div>
   );
 }
