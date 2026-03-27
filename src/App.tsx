@@ -1,21 +1,33 @@
-import Header from "./Components/Header";
-import BowlSelection from "./Components/BowlSelection";
-import BaseSelection from "./Components/BaseSelection";
-import CenterBowl from "./Components/CenterBowl"; 
+import BowlSelection from './Components/BowlSelection';
+import CenterBowl from './Components/CenterBowl';
+import BaseSelection from './Components/BaseSelection';
+import IngredientSection from './Components/IngredientSection';
+import SummaryBar from './Components/SummaryBar';
 
-function App() {
+const App: React.FC = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-white font-sans">
+    <div className="min-h-screen bg-gray-100 p-6 pb-32">
       
-      {/* Header at top */}
-      <Header />
-      <div className="p-8 flex flex-col lg:flex-row gap-8 justify-center items-start">
-        <BowlSelection />
-        <BaseSelection /> 
-        <CenterBowl />
-      </div>
+      <main>
+        <div className="flex flex-col lg:flex-row gap-6 justify-between items-stretch">
+          <BowlSelection />
+          <CenterBowl />
+          <BaseSelection />
+        </div>
+
+        <div className="mt-8">
+          <IngredientSection />
+        </div>
+      </main>
+
+      <SummaryBar 
+        selectedIngredients={[]} 
+        totalWeight="0" 
+        totalPrice="0" 
+      />
+
     </div>
   );
-}
+};
 
 export default App;
