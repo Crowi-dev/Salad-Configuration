@@ -2,7 +2,7 @@ import subprocess
 
 # --- SETTINGS ---
 # Change to your GitHub username and repository name in the format "username/repo"
-REPO = "Crowi-dev/salad-configurator"
+REPO = "Crowi-dev/Salad-Configuration"
 
 # --- TICKET DATA ---
 tickets = [

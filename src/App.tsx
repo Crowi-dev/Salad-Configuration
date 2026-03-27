@@ -1,15 +1,16 @@
-import Header from "./components/Header";
-import BowlSelection from "./components/BowlSelection";
-import BaseSelection from "./components/BaseSelection";
+import Header from "./Components/Header";
+import Footer from "./Components/Footer";
 
 function App() {
   return (
-    <div className="min-h-screen bg-zinc-900">
+    <div className="flex flex-col min-h-screen">
       <Header />
-      <div className="p-8 flex flex-col lg:flex-row gap-8 justify-center items-start">
-        <BowlSelection />
-        <BaseSelection /> 
-      </div>
+
+      <main className="flex-grow">
+        {/* Your page content will go here */}
+      </main>
+
+      <Footer />
     </div>
   );
 }
