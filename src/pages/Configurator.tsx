@@ -36,3 +36,18 @@ const App: React.FC = () => {
 };
 
 export default App;
+
+import { useState } from 'react'; 
+import { Category } from '../types';
+
+const Configurator = () => {
+  const [bowls, setBowls] = useState<Bowl[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+
+  return (
+    <div>
+      <h1> Configurator</h1>
+    </div>
+  );
+};
