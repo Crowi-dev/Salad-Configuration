@@ -8,7 +8,7 @@ import IngredientSection from '../Components/IngredientSection';
 import SummaryBar from '../Components/SummaryBar';
 import Footer from '../Components/Footer';
 
-import { Bowl, Category, Ingredient } from '../types';
+import {type Bowl, type Category, type Ingredient } from '../types';
 
 const Configurator: React.FC = () => {
   // 🔹 State for backend data
