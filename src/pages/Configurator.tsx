@@ -37,10 +37,12 @@ const App: React.FC = () => {
 
 export default App;
 
-import { useState } from 'react'; 
-import { Category } from '../types';
+import { useState, } from 'react'; 
+import { type Category } from '../types';
+import { type Bowl } from '../types';
+import { type Ingredient } from '../types';
 
-const Configurator = () => {
+function Configurator() {
   const [bowls, setBowls] = useState<Bowl[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
@@ -50,4 +52,4 @@ const Configurator = () => {
       <h1> Configurator</h1>
     </div>
   );
-};
+}
