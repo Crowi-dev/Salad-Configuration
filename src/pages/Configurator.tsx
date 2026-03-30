@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import Header from '../Components/Header';
 import BowlSelection from '../Components/BowlSelection';
 import CenterBowl from '../Components/CenterBowl';
@@ -6,13 +8,19 @@ import IngredientSection from '../Components/IngredientSection';
 import SummaryBar from '../Components/SummaryBar';
 import Footer from '../Components/Footer';
 
-const App: React.FC = () => {
+import { Bowl, Category, Ingredient } from '../types';
+
+const Configurator: React.FC = () => {
+  // 🔹 State for backend data
+  const [bowls, setBowls] = useState<Bowl[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
 
       <main className="flex-grow p-6">
-        
         <div className="flex flex-col lg:flex-row gap-6 justify-between items-stretch">
           <BowlSelection />
           <CenterBowl />
@@ -35,19 +43,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
-
-import { useState } from 'react'; 
-import { Category } from '../types';
-
-const Configurator = () => {
-  const [bowls, setBowls] = useState<Bowl[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
-
-  return (
-    <div>
-      <h1> Configurator</h1>
-    </div>
-  );
-};
+export default Configurator;

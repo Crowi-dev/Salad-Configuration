@@ -21,9 +21,9 @@ const Header = () =>{
     
         {/*Right menu*/}
         <div className="bg-[#A2D135] text-black rounded-b-3xl rounded-t-xl px-6 py-4 flex flex-col gap-2 min-w-[200px] shadow-md">
-            <span>Kirjaudu sisään</span>
-            <span>Tallennetut reseptit</span>
-            <span>Ohjeet ja Tuki</span>
+            <p className="hover:underline cursor-pointer">Kirjaudu sisään</p>
+            <p className="hover:underline cursor-pointer">Tallennetut reseptit</p>
+            <p className="hover:underline cursor-pointer">Ohjeet ja Tuki</p>
         </div>
      </div>
      </>
