@@ -42,3 +42,12 @@ export interface PriceListItem {
     price: number;
     type?: String;
 }
+export interface Bowl{
+    /*...*/
+}
+export interface Category{
+    /*...*/
+}
+export interface Ingredient{
+    /*...*/
+}
