@@ -10,7 +10,7 @@ import Footer from '../Components/Footer';
 
 
 import {type Bowl, type Category, type Ingredient } from '../types';
-import { getBowls, getCategories } from "../services/api";
+import { getBowls, getCategories, getIngredients } from "../services/api";
 
 const Configurator: React.FC = () => {
   // 🔹 State for backend data
@@ -29,6 +29,10 @@ const Configurator: React.FC = () => {
 
         const categoriesData = await getCategories();
         setCategories(categoriesData);
+
+        const ingredientsData = await getIngredients();
+        setIngredients(ingredientsData);
+        
       } catch (error) {
         console.error("Error Fetching Bowls:", error);
       } finally {
