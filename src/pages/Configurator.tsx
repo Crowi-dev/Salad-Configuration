@@ -10,21 +10,29 @@ import Footer from '../Components/Footer';
 
 
 import {type Bowl, type Category, type Ingredient } from '../types';
-import { getBowls } from "../services/api";
+import { getBowls, getCategories } from "../services/api";
 
 const Configurator: React.FC = () => {
   // 🔹 State for backend data
   const [bowls, setBowls] = useState<Bowl[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchBowls = async () => {
       try {
-        const data = await getBowls();
-        setBowls(data);
+        setIsLoading(true);
+
+        const bowlsData = await getBowls();
+        setBowls(bowlsData);
+
+        const categoriesData = await getCategories();
+        setCategories(categoriesData);
       } catch (error) {
         console.error("Error Fetching Bowls:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -36,30 +44,32 @@ const Configurator: React.FC = () => {
       <Header />
 
       <main className="flex-grow p-6">
-        <div className="flex flex-col lg:flex-row gap-6 justify-between items-stretch">
-          <BowlSelection />
-          <CenterBowl />
-          <BaseSelection />
-        </div>
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : (
+          <>
+            <div className="flex flex-col lg:flex-row gap-6 justify-between items-stretch">
+              <BowlSelection />
+              <CenterBowl />
+              <BaseSelection />
+            </div>
 
-        <div className="mt-8">
-          <IngredientSection />
-        </div>
+            <div className="mt-8">
+              <IngredientSection />
+            </div>
+          </>
+        )}
       </main>
 
-      <SummaryBar 
-        selectedIngredients={[]} 
-        totalWeight="0" 
-        totalPrice="0" 
+      <SummaryBar
+        selectedIngredients={[]}
+        totalWeight="0"
+        totalPrice="0"
       />
 
       <Footer />
     </div>
   );
 };
-
-
-
-
 
 export default Configurator;
