@@ -53,7 +53,7 @@ const Configurator: React.FC = () => {
         ) : (
           <>
             <div className="flex flex-col lg:flex-row gap-6 justify-between items-stretch">
-              <BowlSelection />
+              <BowlSelection bowls={bowls} />
               <CenterBowl />
               <BaseSelection />
             </div>
