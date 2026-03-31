@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import Header from '../Components/Header';
 import BowlSelection from '../Components/BowlSelection';
@@ -8,7 +8,9 @@ import IngredientSection from '../Components/IngredientSection';
 import SummaryBar from '../Components/SummaryBar';
 import Footer from '../Components/Footer';
 
+
 import {type Bowl, type Category, type Ingredient } from '../types';
+import { getBowls } from "../services/api";
 
 const Configurator: React.FC = () => {
   // 🔹 State for backend data
@@ -16,6 +18,19 @@ const Configurator: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
 
+  useEffect(() => {
+    const fetchBowls = async () => {
+      try {
+        const data = await getBowls();
+        setBowls(data);
+      } catch (error) {
+        console.error("Error Fetching Bowls:", error);
+      }
+    };
+
+    fetchBowls();
+  }, []);
+  
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -42,5 +57,9 @@ const Configurator: React.FC = () => {
     </div>
   );
 };
+
+
+
+
 
 export default Configurator;
