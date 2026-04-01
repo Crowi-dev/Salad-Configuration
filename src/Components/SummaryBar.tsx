@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from 'react-router-dom';
 
 type Ingredient = {
   id: string;
@@ -38,7 +39,7 @@ const SummaryBar: React.FC<SummaryBarProps> = ({
         )}
       </div>
 
-      {/* Right: Totals */}
+       {/* Right: Totals */}
       <div className="flex-1 flex flex-col justify-center items-center gap-6">
         <div className="bg-white text-black font-black text-2xl py-3 w-32 rounded-full mb-2 shadow-md text-center">
           {totalWeight}
@@ -47,6 +48,13 @@ const SummaryBar: React.FC<SummaryBarProps> = ({
         <div className="bg-white text-black font-black text-2xl py-3 w-32 rounded-full mb-2 shadow-md text-center">
           {totalPrice}
         </div>
+
+        {/* ✅ Print Button */}
+        <Link to="/print">
+          <button className="bg-[#A2D135] text-black font-bold px-6 py-3 rounded-full hover:opacity-90 transition">
+            Print
+          </button>
+        </Link>
       </div>
     </div>
   );
