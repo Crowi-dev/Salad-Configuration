@@ -59,7 +59,7 @@ const Configurator: React.FC = () => {
             </div>
 
             <div className="mt-8">
-              <IngredientSection />
+              <IngredientSection categories={categories} ingredients={ingredients} />
             </div>
           </>
         )}
