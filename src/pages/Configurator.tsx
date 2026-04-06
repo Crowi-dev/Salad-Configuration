@@ -8,9 +8,11 @@ import IngredientSection from '../Components/IngredientSection';
 import SummaryBar from '../Components/SummaryBar';
 import Footer from '../Components/Footer';
 
-
-import {type Bowl, type Category, type Ingredient } from '../types';
+import { type Bowl, type Category, type Ingredient } from '../types';
 import { getBowls, getCategories, getIngredients } from "../services/api";
+
+// 🔹 1. Tuodaan Zustand store
+import { useIngredientStore } from '../store/useIngredientStore';
 
 const Configurator: React.FC = () => {
   // 🔹 State for backend data
@@ -18,6 +20,9 @@ const Configurator: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  // 🔹 2. Luetaan valittu pohjatyyppi (baseType) storesta
+  const baseType = useIngredientStore((state: { baseType: any; }) => state.baseType);
 
   useEffect(() => {
     const fetchBowls = async () => {
@@ -34,7 +39,7 @@ const Configurator: React.FC = () => {
         setIngredients(ingredientsData);
         
       } catch (error) {
-        console.error("Error Fetching Bowls:", error);
+        console.error("Error Fetching Data:", error);
       } finally {
         setIsLoading(false);
       }
@@ -43,23 +48,30 @@ const Configurator: React.FC = () => {
     fetchBowls();
   }, []);
   
+  // 🔹 3. Suodatetaan kulhot ja kategoriat baseType_id:n perusteella
+  // Tämä varmistaa, että esim. salaattia tehdessä ei näytetä rahkan kulhoja.
+  const filteredBowls = bowls.filter((bowl) => bowl.base_type_id === baseType);
+  const filteredCategories = categories.filter((category) => category.base_type_id === baseType);
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <main className="flex-grow p-6">
+      <main className="grow p-6">
         {isLoading ? (
           <p>Loading...</p>
         ) : (
           <>
             <div className="flex flex-col lg:flex-row gap-6 justify-between items-stretch">
-              <BowlSelection bowls={bowls} />
+              {/* 🔹 4. Annetaan komponenteille vain SUODATETUT listat */}
+              <BowlSelection bowls={filteredBowls} />
               <CenterBowl />
               <BaseSelection ingredients={ingredients} />
             </div>
 
             <div className="mt-8">
-              <IngredientSection categories={categories} ingredients={ingredients} />
+              {/* 🔹 4. Annetaan IngredientSectionille vain suodatetut kategoriat */}
+              <IngredientSection categories={filteredCategories} ingredients={ingredients} />
             </div>
           </>
         )}
