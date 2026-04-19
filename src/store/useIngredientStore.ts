@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { type Ingredient, type Bowl } from '../types';
 
-// 1. Store interface
+// Store interface
 interface IngredientStore {
   slots: Record<string, Ingredient | null>;
   baseType: number;
@@ -13,10 +13,10 @@ interface IngredientStore {
   clearSelection: () => void;
   
   addIngredient: (item: Ingredient) => void;
-  removeIngredient: (id: number) => void; // ✅ FIXED: number
+  removeIngredient: (id: number) => void;
 }
 
-// 2. Store
+// Store
 export const useIngredientStore = create<IngredientStore>((set) => ({
   // Initial state
   slots: {},
@@ -36,7 +36,7 @@ export const useIngredientStore = create<IngredientStore>((set) => ({
 
   addIngredient: (item) =>
     set((state) => {
-      // Base ingredient (categoryId === 6)
+      // Base ingredient goes to "base"
       if (item.categoryId === 6) {
         return {
           slots: {
@@ -63,7 +63,7 @@ export const useIngredientStore = create<IngredientStore>((set) => ({
         }
       }
 
-      // No available slots → do nothing
+      // No empty slots → do nothing
       if (!targetSlotKey) return state;
 
       return {
@@ -76,14 +76,18 @@ export const useIngredientStore = create<IngredientStore>((set) => ({
 
   removeIngredient: (id) =>
     set((state) => {
-      const updatedSlots = { ...state.slots };
+      const newSlots = { ...state.slots };
 
-      for (const key in updatedSlots) {
-        if (updatedSlots[key]?.id === id) {
-          updatedSlots[key] = null;
-        }
+      // Find FIRST matching slot
+      const keyToRemove = Object.keys(newSlots).find(
+        (key) => newSlots[key]?.id === id
+      );
+
+      // Set it to null if found
+      if (keyToRemove) {
+        newSlots[keyToRemove] = null;
       }
 
-      return { slots: updatedSlots };
+      return { slots: newSlots };
     }),
 }));
