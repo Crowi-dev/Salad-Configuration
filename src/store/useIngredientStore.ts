@@ -1,30 +1,29 @@
 import { create } from 'zustand';
-import { type Ingredient, type Bowl } from '../types'; // Varmista, että polku tyyppeihin on oikein!
+import { type Ingredient, type Bowl } from '../types';
 
-// 1. Määritellään storen rajapinta (Interface)
+// 1. Store interface
 interface IngredientStore {
   slots: Record<string, Ingredient | null>;
   baseType: number;
   selectedBowl: Bowl | null;
   
-  // Setter-funktiot
+  // Actions
   setBaseType: (id: number) => void;
   setBowl: (bowl: Bowl) => void;
   clearSelection: () => void;
   
-  // Tyhjät paikkavaraukset myöhempää käyttöä varten
   addIngredient: (item: Ingredient) => void;
-  removeIngredient: (id: string) => void; 
+  removeIngredient: (id: number) => void; // ✅ FIXED: number
 }
 
-// tehään globaali store
+// 2. Store
 export const useIngredientStore = create<IngredientStore>((set) => ({
-  //  Alkutilat (Initial state) 
+  // Initial state
   slots: {},
-  baseType: 1, // Default 1
+  baseType: 1,
   selectedBowl: null,
 
-  //  Toiminnot (Actions) 
+  // Actions
   setBaseType: (id) => set({ baseType: id }),
   
   setBowl: (bowl) => set({ selectedBowl: bowl }),
@@ -35,11 +34,56 @@ export const useIngredientStore = create<IngredientStore>((set) => ({
     selectedBowl: null 
   }),
 
-  // Tyhjät paikkavaraukset
-  addIngredient: (item) => {
-    // TODO: Toteutetaan myöhemmässä taskissa
-  },
-  
-  removeIngredient: (id) => {
-  }
+  addIngredient: (item) =>
+    set((state) => {
+      // Base ingredient (categoryId === 6)
+      if (item.categoryId === 6) {
+        return {
+          slots: {
+            ...state.slots,
+            base: item,
+          },
+        };
+      }
+
+      const slotCount = state.selectedBowl?.slot_count;
+
+      // No bowl selected → do nothing
+      if (!slotCount) return state;
+
+      // Find first empty slot
+      let targetSlotKey: string | null = null;
+
+      for (let i = 1; i <= slotCount; i++) {
+        const key = `slot-${i}`;
+
+        if (!state.slots[key]) {
+          targetSlotKey = key;
+          break;
+        }
+      }
+
+      // No available slots → do nothing
+      if (!targetSlotKey) return state;
+
+      return {
+        slots: {
+          ...state.slots,
+          [targetSlotKey]: item,
+        },
+      };
+    }),
+
+  removeIngredient: (id) =>
+    set((state) => {
+      const updatedSlots = { ...state.slots };
+
+      for (const key in updatedSlots) {
+        if (updatedSlots[key]?.id === id) {
+          updatedSlots[key] = null;
+        }
+      }
+
+      return { slots: updatedSlots };
+    }),
 }));
