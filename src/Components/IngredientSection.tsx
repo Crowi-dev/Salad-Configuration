@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react"; // useState mukaan
 import { type Category, type Ingredient } from "../types";
 import IngredientCard from "./IngredientCard";
 
@@ -8,10 +8,15 @@ interface Props {
 }
 
 const IngredientSection: React.FC<Props> = ({ categories, ingredients }) => {
+  // aktiivinen kategoria, oletuksena 'all' eli näytetään kaikki
+  const [activeCategory, setActiveCategory] = useState<number | "all">("all");
+
   const visibleCategories = categories.filter((c) => c.id !== 6);
-  const visibleIngredients = ingredients.filter(
-    (i) => i.categoryId !== 6
-  );
+
+  // suodatetaan ainesosat kategorian mukaan, jos 'all' näytetään kaikki
+  const visibleIngredients = ingredients
+    .filter((i) => i.categoryId !== 6)
+    .filter((i) => activeCategory === "all" || i.categoryId === activeCategory);
 
   return (
     <div className="bg-zinc-800 rounded-[3rem] p-8 text-white w-full shadow-lg">
@@ -25,15 +30,30 @@ const IngredientSection: React.FC<Props> = ({ categories, ingredients }) => {
         />
       </div>
 
-      {/* Categories */}
+      {/* Categories - lisätty kaikki-nappi ja onClick */}
       <div className="flex flex-wrap gap-3 mb-6">
+
+        {/* kaikki-nappi nollaa filterin */}
+        <button
+          onClick={() => setActiveCategory("all")}
+          className={`font-bold px-6 py-2 rounded-full cursor-pointer hover:opacity-80 transition-opacity ${
+            activeCategory === "all" ? "bg-white text-black" : "bg-[#A2D135] text-black"
+          }`}
+        >
+          Kaikki
+        </button>
+
+        {/* loopataan kategoriat ja vaihdetaan väriä jos aktiivinen */}
         {visibleCategories.map((category) => (
-          <span
+          <button
             key={category.id}
-            className="bg-[#A2D135] text-black font-bold px-6 py-2 rounded-full cursor-pointer hover:opacity-80"
+            onClick={() => setActiveCategory(category.id)}
+            className={`font-bold px-6 py-2 rounded-full cursor-pointer hover:opacity-80 transition-opacity ${
+              activeCategory === category.id ? "bg-white text-black" : "bg-[#A2D135] text-black"
+            }`}
           >
             {category.name}
-          </span>
+          </button>
         ))}
       </div>
 
