@@ -1,4 +1,4 @@
-import React, { useState } from "react"; // useState mukaan
+import React, { useState } from "react";
 import { type Category, type Ingredient } from "../types";
 import IngredientCard from "./IngredientCard";
 
@@ -8,29 +8,34 @@ interface Props {
 }
 
 const IngredientSection: React.FC<Props> = ({ categories, ingredients }) => {
-  // aktiivinen kategoria, oletuksena 'all' eli näytetään kaikki
+  // aktiivinen kategoria, oletuksena kaikki
   const [activeCategory, setActiveCategory] = useState<number | "all">("all");
+  // hakusana state, oletuksena tyhjä
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const visibleCategories = categories.filter((c) => c.id !== 6);
 
-  // suodatetaan ainesosat kategorian mukaan, jos 'all' näytetään kaikki
+  // suodatetaan kategorian JA hakusanan mukaan
   const visibleIngredients = ingredients
     .filter((i) => i.categoryId !== 6)
-    .filter((i) => activeCategory === "all" || i.categoryId === activeCategory);
+    .filter((i) => activeCategory === "all" || i.categoryId === activeCategory)
+    .filter((i) => i.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
     <div className="bg-zinc-800 rounded-[3rem] p-8 text-white w-full shadow-lg">
       
-      {/* Search Field */}
+      {/* Search Field - päivitetään searchQuery ku kirjotetaan */}
       <div className="mb-6">
         <input
           type="text"
           placeholder="Search ingredients..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
           className="rounded-full px-6 py-3 text-black outline-none w-64 border-2 border-transparent focus:border-[#A2D135]"
         />
       </div>
 
-      {/* Categories - lisätty kaikki-nappi ja onClick */}
+      {/* Categories - kaikki-nappi ja kategorianapit */}
       <div className="flex flex-wrap gap-3 mb-6">
 
         {/* kaikki-nappi nollaa filterin */}
