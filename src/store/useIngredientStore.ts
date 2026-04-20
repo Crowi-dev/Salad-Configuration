@@ -1,42 +1,37 @@
-import { create } from 'zustand';
-import { type Ingredient, type Bowl } from '../types';
+import { create } from "zustand";
+import { type Ingredient, type Bowl } from "../types";
 
-// Store interface
 interface IngredientStore {
   slots: Record<string, Ingredient | null>;
   baseType: number;
   selectedBowl: Bowl | null;
-  
-  // Actions
+
   setBaseType: (id: number) => void;
   setBowl: (bowl: Bowl) => void;
   clearSelection: () => void;
-  
+
   addIngredient: (item: Ingredient) => void;
   removeIngredient: (id: number) => void;
 }
 
-// Store
 export const useIngredientStore = create<IngredientStore>((set) => ({
-  // Initial state
   slots: {},
   baseType: 1,
   selectedBowl: null,
 
-  // Actions
   setBaseType: (id) => set({ baseType: id }),
-  
+
   setBowl: (bowl) => set({ selectedBowl: bowl }),
-  
-  clearSelection: () => set({ 
-    slots: {}, 
-    baseType: 1, 
-    selectedBowl: null 
-  }),
+
+  clearSelection: () =>
+    set({
+      slots: {},
+      baseType: 1,
+      selectedBowl: null,
+    }),
 
   addIngredient: (item) =>
     set((state) => {
-      // Base ingredient goes to "base"
       if (item.categoryId === 6) {
         return {
           slots: {
@@ -47,23 +42,18 @@ export const useIngredientStore = create<IngredientStore>((set) => ({
       }
 
       const slotCount = state.selectedBowl?.slot_count;
-
-      // No bowl selected → do nothing
       if (!slotCount) return state;
 
-      // Find first empty slot
       let targetSlotKey: string | null = null;
 
       for (let i = 1; i <= slotCount; i++) {
         const key = `slot-${i}`;
-
         if (!state.slots[key]) {
           targetSlotKey = key;
           break;
         }
       }
 
-      // No empty slots → do nothing
       if (!targetSlotKey) return state;
 
       return {
@@ -78,12 +68,10 @@ export const useIngredientStore = create<IngredientStore>((set) => ({
     set((state) => {
       const newSlots = { ...state.slots };
 
-      // Find FIRST matching slot
       const keyToRemove = Object.keys(newSlots).find(
         (key) => newSlots[key]?.id === id
       );
 
-      // Set it to null if found
       if (keyToRemove) {
         newSlots[keyToRemove] = null;
       }
