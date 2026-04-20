@@ -1,17 +1,20 @@
 import React from 'react';
-// 🔹 1. Tuodaan Zustand-store
 import { useIngredientStore } from '../store/useIngredientStore';
 
 const CenterBowl: React.FC = () => {
-  // 🔹 2. Haetaan nykyinen valinta ja asetusfunktio storesta
   const baseType = useIngredientStore((state) => state.baseType);
   const setBaseType = useIngredientStore((state) => state.setBaseType);
+  const slots = useIngredientStore((state) => state.slots); // ✅ NEW
+
+  // Convert slots → active ingredients array
+  const activeIngredients = Object.values(slots).filter(
+    (i): i is NonNullable<typeof i> => i !== null
+  );
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center min-h-100 mt-4 lg:mt-0">
-          
+      
       <div className="flex gap-3 mb-6 items-center">
-        {/* 🔹 3. Yhdistetään napit storeen ja lisätään aktiivisen tilan tyylit */}
         <button 
           onClick={() => setBaseType(1)}
           className={`px-4 py-2 rounded-lg font-bold transition-colors ${
@@ -30,17 +33,29 @@ const CenterBowl: React.FC = () => {
           Rahka
         </button>
         
-        {/* emojit vähä facny */}
         <span>🥗</span>
         <span>🥣</span>
       </div>
 
-      {/* kulho */}
-      <div className="w-80 h-80 rounded-full border-12 border-gray-200 bg-gray-50 flex items-center justify-center shadow-inner relative">
-        <span className="text-gray-400">Kulho on tyhjä</span>
+      {/* Bowl */}
+      <div className="w-80 h-80 rounded-full border-12 border-gray-200 bg-gray-50 flex flex-wrap items-center justify-center gap-2 shadow-inner relative p-4">
+        
+        {activeIngredients.length === 0 ? (
+          <span className="text-gray-400">Kulho on tyhjä</span>
+        ) : (
+          activeIngredients.map((ingredient) => (
+            <span
+              key={ingredient.id}
+              className="px-3 py-1 bg-green-200 text-green-800 rounded-full text-sm"
+            >
+              {ingredient.name}
+            </span>
+          ))
+        )}
+
       </div>
 
-      {/* Hinta- ja tilavuustiedot  */}
+      {/* Info */}
       <div className="mt-6 flex flex-col items-center">
         <span>100 g / 1,99 €</span>
         <span className="text-gray-500">500 ml</span>
