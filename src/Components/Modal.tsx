@@ -7,29 +7,31 @@ type ModalProps = {
 };
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
-  // ✅ Required conditional rendering
+  // ✅ Do not render if closed
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    // ✅ Overlay (clicking this closes modal)
+    <div
+      className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+      onClick={onClose}
+    >
       
-      {/* Background overlay */}
+      {/* ✅ White modal box (click inside does NOT close) */}
       <div
-        className="absolute inset-0 bg-black/50"
-        onClick={onClose}
-      />
-
-      {/* Modal content */}
-      <div className="relative bg-white rounded-2xl shadow-xl p-6 z-10 min-w-[300px]">
+        className="bg-white rounded-2xl shadow-xl p-6 min-w-[300px] relative"
+        onClick={(e) => e.stopPropagation()}
+      >
         
-        {/* Close button */}
+        {/* ❌ Close button */}
         <button
           onClick={onClose}
-          className="absolute top-2 right-3 text-gray-500 hover:text-black text-lg"
+          className="absolute top-2 right-3 text-gray-500 hover:text-black text-lg font-bold"
         >
           ×
         </button>
 
+        {/* Content */}
         {children}
       </div>
     </div>
