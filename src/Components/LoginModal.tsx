@@ -4,25 +4,17 @@ import Modal from "./Modal";
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit?: (email: string, password: string) => void;
 }
 
-const LoginModal: React.FC<LoginModalProps> = ({
-  isOpen,
-  onClose,
-  onSubmit,
-}) => {
+const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (onSubmit) {
-      onSubmit(email, password);
-    }
+    console.log("Login clicked");
 
-    // optional reset
     setEmail("");
     setPassword("");
   };
