@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import LoginModal from "./LoginModal";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   return (
     <div className="bg-zinc-800 text-white w-full h-32 flex justify-between items-start px-8 pt-4 relative">
@@ -31,7 +33,7 @@ const Header = () => {
           <span className="w-6 h-0.5 bg-white"></span>
         </button>
 
-        {/* Dropdown (Tailwind controlled) */}
+        {/* Dropdown */}
         <div
           className={`
             absolute top-12 right-0
@@ -46,12 +48,31 @@ const Header = () => {
               : "opacity-0 scale-95 pointer-events-none"}
           `}
         >
-          <p className="hover:underline cursor-pointer">Kirjaudu sisään</p>
-          <p className="hover:underline cursor-pointer">Tallennetut reseptit</p>
-          <p className="hover:underline cursor-pointer">Ohjeet ja Tuki</p>
-        </div>
+          {/* Login button */}
+          <button
+            onClick={() => {
+              setIsLoginOpen(true);
+              setIsMenuOpen(false);
+            }}
+            className="text-left hover:underline cursor-pointer"
+          >
+            Kirjaudu sisään
+          </button>
 
+          <p className="hover:underline cursor-pointer">
+            Tallennetut reseptit
+          </p>
+          <p className="hover:underline cursor-pointer">
+            Ohjeet ja Tuki
+          </p>
+        </div>
       </div>
+
+      {/* Login Modal */}
+      <LoginModal
+        isOpen={isLoginOpen}
+        onClose={() => setIsLoginOpen(false)}
+      />
     </div>
   );
 };
