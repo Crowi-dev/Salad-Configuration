@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import LoginModal from "./LoginModal";
+import { useAuthStore } from "../store/useAuthStore";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+
+  const userName = useAuthStore((state) => state.userName);
+  const logout = useAuthStore((state) => state.logout);
 
   return (
     <div className="bg-zinc-800 text-white w-full h-32 flex justify-between items-start px-8 pt-4 relative">
@@ -48,16 +52,32 @@ const Header = () => {
               : "opacity-0 scale-95 pointer-events-none"}
           `}
         >
-          {/* Login button */}
-          <button
-            onClick={() => {
-              setIsLoginOpen(true);
-              setIsMenuOpen(false);
-            }}
-            className="text-left hover:underline cursor-pointer"
-          >
-            Kirjaudu sisään
-          </button>
+          {userName ? (
+            <>
+              {/* Logged in state */}
+              <p className="font-semibold">Hei, {userName}!</p>
+              <button
+                onClick={() => {
+                  logout();
+                  setIsMenuOpen(false);
+                }}
+                className="text-left hover:underline cursor-pointer text-red-700"
+              >
+                Kirjaudu ulos
+              </button>
+            </>
+          ) : (
+            /* Logged out state */
+            <button
+              onClick={() => {
+                setIsLoginOpen(true);
+                setIsMenuOpen(false);
+              }}
+              className="text-left hover:underline cursor-pointer"
+            >
+              Kirjaudu sisään
+            </button>
+          )}
 
           <p className="hover:underline cursor-pointer">
             Tallennetut reseptit
