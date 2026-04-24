@@ -45,3 +45,17 @@ export const loginUser = async (email: string, password: string) => {
 
   return response.json();
 };
+
+export const getPrices = async (token: string) => {
+  const response = await fetch(`${BASE_URL}/prices`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch prices");
+  }
+
+  return response.json();
+};

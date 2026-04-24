@@ -1,11 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useIngredientStore } from "../store/useIngredientStore";
+import { usePriceStore } from "../store/usePriceStore";
+import { useAuthStore } from "../store/useAuthStore";
 import { calculateTotalWeight } from "../utils/calculations";
 
 const SummaryBar: React.FC = () => {
   const slots = useIngredientStore((state) => state.slots);
   const removeIngredient = useIngredientStore((state) => state.removeIngredient);
+  const prices = usePriceStore((state) => state.prices);
+  const token = useAuthStore((state) => state.token);
 
   // Convert slots → active ingredients
   const activeIngredients = Object.values(slots).filter(
@@ -13,6 +17,12 @@ const SummaryBar: React.FC = () => {
   );
 
   const totalWeight = calculateTotalWeight(activeIngredients);
+
+  // Calculate total price by matching each ingredient to the price list
+  const totalPrice = activeIngredients.reduce((sum, ingredient) => {
+    const priceItem = prices.find((p) => p.item_id === ingredient.id);
+    return sum + (priceItem?.price ?? 0);
+  }, 0);
 
   return (
     <div className="bg-zinc-800 rounded-[3rem] p-8 text-white w-full flex flex-col md:flex-row gap-8 shadow-xl">
@@ -51,8 +61,9 @@ const SummaryBar: React.FC = () => {
           {activeIngredients.length} items
         </div>
 
+        {/* Price — only show real price if logged in */}
         <div className="bg-white text-black font-black text-2xl py-3 w-32 rounded-full mb-2 shadow-md text-center">
-          0,00 €
+          {token ? `${totalPrice.toFixed(2)} €` : "0,00 €"}
         </div>
 
         {/* Arvioitu paino */}
