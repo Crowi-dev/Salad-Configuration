@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import Modal from "./Modal";
+import { loginUser } from "../services/api";
+import { useAuthStore } from "../store/useAuthStore";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -9,14 +11,23 @@ interface LoginModalProps {
 const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const login = useAuthStore((state) => state.login);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
 
-    console.log("Login clicked");
-
-    setEmail("");
-    setPassword("");
+    try {
+      const data = await loginUser(email, password);
+      login(data.token, data.name);
+      setEmail("");
+      setPassword("");
+      onClose();
+    } catch {
+      setError("Invalid email or password. Please try again.");
+    }
   };
 
   return (
@@ -56,6 +67,11 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
               placeholder="••••••••"
             />
           </div>
+
+          {/* Error message */}
+          {error && (
+            <p className="text-red-500 text-sm">{error}</p>
+          )}
 
           {/* Submit */}
           <button
