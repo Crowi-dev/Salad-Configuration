@@ -14,9 +14,11 @@ const SaveRecipeModal: React.FC<SaveRecipeModalProps> = ({ isOpen, onClose }) =>
   const [isPublic, setIsPublic] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const slots = useIngredientStore((state) => state.slots);
   const selectedBowl = useIngredientStore((state) => state.selectedBowl);
+  const clearSelection = useIngredientStore((state) => state.clearSelection);
   const token = useAuthStore((state) => state.token);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,7 +35,6 @@ const SaveRecipeModal: React.FC<SaveRecipeModalProps> = ({ isOpen, onClose }) =>
       return;
     }
 
-    // Extract ingredient IDs from active slots
     const ingredientIds = Object.values(slots)
       .filter((i): i is NonNullable<typeof i> => i !== null)
       .map((i) => i.id);
@@ -46,9 +47,14 @@ const SaveRecipeModal: React.FC<SaveRecipeModalProps> = ({ isOpen, onClose }) =>
         ingredientIds,
         is_public: isPublic,
       });
-      setRecipeName("");
-      setIsPublic(false);
-      onClose();
+      setSuccess(true);
+      clearSelection();
+      setTimeout(() => {
+        setSuccess(false);
+        setRecipeName("");
+        setIsPublic(false);
+        onClose();
+      }, 1500);
     } catch (err) {
       setError("Failed to save recipe. Please try again.");
     } finally {
@@ -93,6 +99,11 @@ const SaveRecipeModal: React.FC<SaveRecipeModalProps> = ({ isOpen, onClose }) =>
               Tee julkinen
             </label>
           </div>
+
+          {/* Success message */}
+          {success && (
+            <p className="text-green-600 text-sm font-medium">Recipe saved! ✓</p>
+          )}
 
           {/* Error */}
           {error && (
