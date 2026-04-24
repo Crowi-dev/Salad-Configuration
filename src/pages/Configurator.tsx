@@ -9,49 +9,68 @@ import SummaryBar from '../Components/SummaryBar';
 import Footer from '../Components/Footer';
 
 import { type Bowl, type Category, type Ingredient } from '../types';
-import { getBowls, getCategories, getIngredients } from "../services/api";
-
-// 🔹 1. Tuodaan Zustand store
+import { getBowls, getCategories, getIngredients, getBaseIngredients } from "../services/api";
 import { useIngredientStore } from '../store/useIngredientStore';
 
 const Configurator: React.FC = () => {
-  // 🔹 State for backend data
   const [bowls, setBowls] = useState<Bowl[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [baseIngredients, setBaseIngredients] = useState<Ingredient[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // 🔹 2. Luetaan valittu pohjatyyppi (baseType) storesta
-  const baseType = useIngredientStore((state: { baseType: any; }) => state.baseType);
+  const baseType = useIngredientStore((state) => state.baseType);
 
+  // Fetch bowls and categories when baseType changes
   useEffect(() => {
-    const fetchBowls = async () => {
+    const fetchTypeData = async () => {
+      try {
+        const [bowlsData, categoriesData] = await Promise.all([
+          getBowls(baseType),
+          getCategories(baseType),
+        ]);
+        setBowls(bowlsData);
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error("Error fetching type data:", error);
+      }
+    };
+
+    fetchTypeData();
+  }, [baseType]);
+
+  // Fetch ingredients and base ingredients once on mount
+  useEffect(() => {
+    const fetchStaticData = async () => {
       try {
         setIsLoading(true);
+        const [ingredientsData, baseIngredientsData] = await Promise.all([
+          getIngredients(),
+          getBaseIngredients(),
+        ]);
 
-        const bowlsData = await getBowls();
-        setBowls(bowlsData);
+        // Deduplicate by id
+        const uniqueIngredients = ingredientsData.filter(
+          (item: Ingredient, index: number, self: Ingredient[]) =>
+            index === self.findIndex((i) => i.id === item.id)
+        );
 
-        const categoriesData = await getCategories();
-        setCategories(categoriesData);
+        const uniqueBaseIngredients = baseIngredientsData.filter(
+          (item: Ingredient, index: number, self: Ingredient[]) =>
+            index === self.findIndex((i) => i.id === item.id)
+        );
 
-        const ingredientsData = await getIngredients();
-        setIngredients(ingredientsData);
-        
+        setIngredients(uniqueIngredients);
+        setBaseIngredients(uniqueBaseIngredients);
       } catch (error) {
-        console.error("Error Fetching Data:", error);
+        console.error("Error fetching static data:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchBowls();
+    fetchStaticData();
   }, []);
-  
-  // 🔹 3. Suodatetaan kulhot ja kategoriat baseType_id:n perusteella
-  // Tämä varmistaa, että esim. salaattia tehdessä ei näytetä rahkan kulhoja.
-  const filteredBowls = bowls.filter((bowl) => bowl.base_type_id === baseType);
-  const filteredCategories = categories.filter((category) => category.base_type_id === baseType);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -63,25 +82,19 @@ const Configurator: React.FC = () => {
         ) : (
           <>
             <div className="flex flex-col lg:flex-row gap-6 justify-between items-stretch">
-              {/* 🔹 4. Annetaan komponenteille vain SUODATETUT listat */}
-              <BowlSelection bowls={filteredBowls} />
+              <BowlSelection bowls={bowls} />
               <CenterBowl />
-              <BaseSelection ingredients={ingredients} />
+              <BaseSelection ingredients={baseIngredients} />
             </div>
 
             <div className="mt-8">
-              {/* 🔹 4. Annetaan IngredientSectionille vain suodatetut kategoriat */}
-              <IngredientSection categories={filteredCategories} ingredients={ingredients} />
+              <IngredientSection categories={categories} ingredients={ingredients} />
             </div>
           </>
         )}
       </main>
 
-      <SummaryBar
-        selectedIngredients={[]}
-        totalWeight="0"
-        totalPrice="0"
-      />
+      <SummaryBar />
 
       <Footer />
     </div>

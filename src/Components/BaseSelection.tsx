@@ -6,10 +6,6 @@ interface Props {
 }
 
 const BaseSelection: React.FC<Props> = ({ ingredients }) => {
-  const baseIngredients = ingredients.filter(
-    (ingredient) => ingredient.categoryId === 6
-  );
-
   return (
     <div className="bg-zinc-800 rounded-[3rem] p-6 text-white w-full lg:w-1/4 flex flex-col items-center shadow-lg">
 
@@ -23,17 +19,15 @@ const BaseSelection: React.FC<Props> = ({ ingredients }) => {
       </div>
 
       <div className="w-full flex flex-col gap-6">
-        {baseIngredients.map((ingredient) => (
+        {ingredients.map((ingredient) => (
           <div
             key={ingredient.id}
             className="border-b border-gray-600 pb-2 flex justify-end gap-4 items-center"
           >
             <span className="mr-auto">{ingredient.name}</span>
-
             <span className="text-sm text-gray-400">
               {ingredient.price ? `${ingredient.price}€` : '0,00€'}
             </span>
-
             <div className="w-5 h-5 border-2 border-gray-400 rounded-full"></div>
           </div>
         ))}
