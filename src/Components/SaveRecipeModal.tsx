@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import Modal from "./Modal";
+import { useIngredientStore } from "../store/useIngredientStore";
+import { useAuthStore } from "../store/useAuthStore";
+import { saveRecipe } from "../services/api";
 
 interface SaveRecipeModalProps {
   isOpen: boolean;
@@ -9,10 +12,48 @@ interface SaveRecipeModalProps {
 const SaveRecipeModal: React.FC<SaveRecipeModalProps> = ({ isOpen, onClose }) => {
   const [recipeName, setRecipeName] = useState("");
   const [isPublic, setIsPublic] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const slots = useIngredientStore((state) => state.slots);
+  const selectedBowl = useIngredientStore((state) => state.selectedBowl);
+  const token = useAuthStore((state) => state.token);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Recipe name:", recipeName, "| Public:", isPublic);
+    setError(null);
+
+    if (!token) {
+      setError("You must be logged in to save a recipe.");
+      return;
+    }
+
+    if (!selectedBowl) {
+      setError("Please select a bowl first.");
+      return;
+    }
+
+    // Extract ingredient IDs from active slots
+    const ingredientIds = Object.values(slots)
+      .filter((i): i is NonNullable<typeof i> => i !== null)
+      .map((i) => i.id);
+
+    try {
+      setIsSaving(true);
+      await saveRecipe(token, {
+        name: recipeName,
+        bowlId: selectedBowl.id,
+        ingredientIds,
+        is_public: isPublic,
+      });
+      setRecipeName("");
+      setIsPublic(false);
+      onClose();
+    } catch (err) {
+      setError("Failed to save recipe. Please try again.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -53,6 +94,11 @@ const SaveRecipeModal: React.FC<SaveRecipeModalProps> = ({ isOpen, onClose }) =>
             </label>
           </div>
 
+          {/* Error */}
+          {error && (
+            <p className="text-red-500 text-sm">{error}</p>
+          )}
+
           {/* Buttons */}
           <div className="flex gap-3 pt-2">
             <button
@@ -64,9 +110,10 @@ const SaveRecipeModal: React.FC<SaveRecipeModalProps> = ({ isOpen, onClose }) =>
             </button>
             <button
               type="submit"
-              className="flex-1 bg-[#A2D135] text-black font-bold py-2 rounded-lg hover:opacity-90 transition"
+              disabled={isSaving}
+              className="flex-1 bg-[#A2D135] text-black font-bold py-2 rounded-lg hover:opacity-90 transition disabled:opacity-50"
             >
-              Tallenna
+              {isSaving ? "Tallennetaan..." : "Tallenna"}
             </button>
           </div>
 

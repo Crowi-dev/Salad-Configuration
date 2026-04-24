@@ -43,3 +43,22 @@ export const getPrices = async (token: string) => {
   if (!response.ok) throw new Error("Failed to fetch prices");
   return response.json();
 };
+
+export const saveRecipe = async (token: string, recipeData: {
+  name: string;
+  bowlId: number;
+  ingredientIds: number[];
+  is_public: boolean;
+}) => {
+  const response = await fetch(`${BASE_URL}/recipes`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(recipeData),
+  });
+
+  if (!response.ok) throw new Error("Failed to save recipe");
+  return response.json();
+};
