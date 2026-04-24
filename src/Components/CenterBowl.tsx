@@ -6,6 +6,7 @@ const CenterBowl: React.FC = () => {
   const setBaseType = useIngredientStore((state) => state.setBaseType);
   const slots = useIngredientStore((state) => state.slots);
   const selectedBowl = useIngredientStore((state) => state.selectedBowl);
+  const clearSelection = useIngredientStore((state) => state.clearSelection);
 
   const activeIngredients = Object.values(slots).filter(
     (i): i is NonNullable<typeof i> => i !== null
@@ -40,6 +41,35 @@ const CenterBowl: React.FC = () => {
 
         <span>🥗</span>
         <span>🥣</span>
+      </div>
+
+      {/* Icon buttons above bowl */}
+      <div className="flex gap-4 mb-3">
+        <button
+          onClick={() => alert('Feature coming soon!')}
+          className="text-xl p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          title="Undo"
+        >
+          ↩️
+        </button>
+        <button
+          onClick={() => {
+            if (window.confirm('Are you sure you want to empty the bowl?')) {
+              clearSelection();
+            }
+          }}
+          className="text-xl p-2 rounded-lg hover:bg-red-50 transition-colors"
+          title="Clear bowl"
+        >
+          🗑️
+        </button>
+        <button
+          onClick={() => alert('Feature coming soon!')}
+          className="text-xl p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          title="Save"
+        >
+          💾
+        </button>
       </div>
 
       {/* Bowl */}
