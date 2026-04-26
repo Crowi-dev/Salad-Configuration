@@ -11,6 +11,7 @@ export interface Bowl extends BaseType {
   volume?: number;
   slot_count: number;
   shape: 'round' | 'square';
+  wedge_image_url?: string; // 👈 lisätty
 }
 
 export interface Category {
@@ -23,7 +24,7 @@ export interface Ingredient extends BaseType {
   categoryId: number;
   diets: string[];
   weight_grams?: number;
-  wedge_image_url?: string; 
+  wedge_image_url?: string;
 }
 
 
