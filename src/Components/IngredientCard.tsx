@@ -15,7 +15,6 @@ const IngredientCard: React.FC<Props> = ({ ingredient }) => {
 
 
   const priceItem = prices.find((p) => p.item_id === ingredient.id);
-  console.log("ingredient id:", ingredient.id, "| prices item_ids:", prices.map(p => p.item_id));
 
   return (
     <button
