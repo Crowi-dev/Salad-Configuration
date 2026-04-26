@@ -1,4 +1,5 @@
 import React from "react";
+import { useDroppable } from '@dnd-kit/core'; 
 import { useIngredientStore } from "../store/useIngredientStore";
 
 const CenterBowl: React.FC = () => {
@@ -8,11 +9,13 @@ const CenterBowl: React.FC = () => {
   const selectedBowl = useIngredientStore((state) => state.selectedBowl);
   const clearSelection = useIngredientStore((state) => state.clearSelection);
   const clearSlot = useIngredientStore((state) => state.clearSlot);
-  const undo = useIngredientStore((state) => state.undo); // 👈 lisätty
+  const undo = useIngredientStore((state) => state.undo);
+
+  // bowl on droppable alue
+  const { setNodeRef, isOver } = useDroppable({ id: 'bowl-drop' });
 
   const baseIngredient = slots["base"];
 
-  // slotit ilman base-kerrosta
   const ingredientSlots = Object.entries(slots).filter(
     ([key]) => key !== "base"
   );
@@ -49,7 +52,7 @@ const CenterBowl: React.FC = () => {
       {/* Icon buttons above bowl */}
       <div className="flex gap-4 mb-3">
         <button
-          onClick={() => undo()} // 👈 vaihdettu
+          onClick={() => undo()}
           className="text-xl p-2 rounded-lg hover:bg-gray-100 transition-colors"
           title="Undo"
         >
@@ -75,8 +78,15 @@ const CenterBowl: React.FC = () => {
         </button>
       </div>
 
-      {/* Bowl */}
-      <div className="relative w-80 h-80 rounded-full border-4 border-gray-200 bg-gray-50 shadow-inner overflow-hidden">
+      {/* Bowl - useDroppable ref ja isOver highlight */}
+      <div
+        ref={setNodeRef}
+        className={`relative w-80 h-80 rounded-full border-4 shadow-inner overflow-hidden transition-colors ${
+          isOver
+            ? "border-[#A2D135] bg-green-50"
+            : "border-gray-200 bg-gray-50"
+        }`}
+      >
 
         {/* Pohjan kuva z-10 */}
         {baseIngredient?.image_url && (
@@ -88,9 +98,13 @@ const CenterBowl: React.FC = () => {
         )}
 
         {/* Divider z-20 */}
-        {selectedBowl?.wedge_image_url && (
+        {selectedBowl && (
           <img
-            src={selectedBowl.wedge_image_url}
+            src={
+              selectedBowl.slot_count === 4
+                ? "https://www.cc.puv.fi/~asa/fresh/images/jakaja_4_lohkoa.png"
+                : "https://www.cc.puv.fi/~asa/fresh/images/jakaja_6_lohkoa.png"
+            }
             alt="divider"
             className="absolute inset-0 w-full h-full object-cover z-20"
           />
@@ -105,7 +119,6 @@ const CenterBowl: React.FC = () => {
                 alt={ingredient.name}
                 className="w-full h-full object-cover"
               />
-              {/* X-nappi poistaa slotin */}
               <button
                 onClick={() => clearSlot(slotKey)}
                 className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold hover:bg-red-700"
@@ -119,7 +132,7 @@ const CenterBowl: React.FC = () => {
         {/* Tyhjä teksti */}
         {ingredientSlots.every(([, i]) => i === null) && !baseIngredient && (
           <div className="absolute inset-0 z-30 flex items-center justify-center">
-            <span className="text-gray-400">Kulho on tyhjä</span>
+            <span className="text-gray-400">Pudota ainesosa tähän</span>
           </div>
         )}
       </div>

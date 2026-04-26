@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { DndContext, type DragEndEvent } from '@dnd-kit/core'; 
 
 import Header from '../Components/Header';
 import BowlSelection from '../Components/BowlSelection';
@@ -20,8 +21,16 @@ const Configurator: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const baseType = useIngredientStore((state) => state.baseType);
+  const addIngredient = useIngredientStore((state) => state.addIngredient); 
 
-  // Fetch bowls and categories when baseType changes
+  // drag and drop handler - lisätään ainesosa ku droppaa
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { over, active } = event;
+    if (over?.id === 'bowl-drop' && active.data.current?.ingredient) {
+      addIngredient(active.data.current.ingredient as Ingredient);
+    }
+  };
+
   useEffect(() => {
     const fetchTypeData = async () => {
       try {
@@ -35,11 +44,9 @@ const Configurator: React.FC = () => {
         console.error("Error fetching type data:", error);
       }
     };
-
     fetchTypeData();
   }, [baseType]);
 
-  // Fetch ingredients and base ingredients once on mount
   useEffect(() => {
     const fetchStaticData = async () => {
       try {
@@ -67,43 +74,45 @@ const Configurator: React.FC = () => {
         setIsLoading(false);
       }
     };
-
     fetchStaticData();
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
+    // DndContext wrappaa koko sivun et drag toimii kaikkialla
+    <DndContext onDragEnd={handleDragEnd}>
+      <div className="min-h-screen flex flex-col">
+        <Header />
 
-      <main className="grow p-6">
-        {isLoading ? (
-          <p>Loading...</p>
-        ) : (
-          <>
-            <div className="flex flex-col lg:flex-row gap-6 justify-between items-stretch">
-              <BowlSelection bowls={bowls} />
-              <CenterBowl />
-              {/* piilotetaan BaseSelection ku Rahka valittuna */}
-              {baseType === 1 ? (
-                <BaseSelection ingredients={baseIngredients} />
-              ) : (
-                <div className="bg-zinc-800 rounded-[3rem] p-6 text-white w-full lg:w-1/4 flex flex-col items-center justify-center shadow-lg">
-                  <p className="text-gray-400 text-center">No base options for quark</p>
-                </div>
-              )}
+        <main className="grow p-6">
+          {isLoading ? (
+            <div className="flex items-center justify-center h-96">
+              <div className="w-12 h-12 border-4 border-[#A2D135] border-t-transparent rounded-full animate-spin" />
             </div>
+          ) : (
+            <>
+              <div className="flex flex-col lg:flex-row gap-6 justify-between items-stretch">
+                <BowlSelection bowls={bowls} />
+                <CenterBowl />
+                {baseType === 1 ? (
+                  <BaseSelection ingredients={baseIngredients} />
+                ) : (
+                  <div className="bg-zinc-800 rounded-[3rem] p-6 text-white w-full lg:w-1/4 flex flex-col items-center justify-center shadow-lg">
+                    <p className="text-gray-400 text-center">No base options for quark</p>
+                  </div>
+                )}
+              </div>
 
-            <div className="mt-8">
-              <IngredientSection categories={categories} ingredients={ingredients} />
-            </div>
-          </>
-        )}
-      </main>
+              <div className="mt-8">
+                <IngredientSection categories={categories} ingredients={ingredients} />
+              </div>
+            </>
+          )}
+        </main>
 
-      <SummaryBar />
-
-      <Footer />
-    </div>
+        <SummaryBar />
+        <Footer />
+      </div>
+    </DndContext>
   );
 };
 
