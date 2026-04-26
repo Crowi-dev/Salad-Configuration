@@ -7,7 +7,8 @@ const CenterBowl: React.FC = () => {
   const slots = useIngredientStore((state) => state.slots);
   const selectedBowl = useIngredientStore((state) => state.selectedBowl);
   const clearSelection = useIngredientStore((state) => state.clearSelection);
-  const clearSlot = useIngredientStore((state) => state.clearSlot); // 👈 lisätty
+  const clearSlot = useIngredientStore((state) => state.clearSlot);
+  const undo = useIngredientStore((state) => state.undo); // 👈 lisätty
 
   const baseIngredient = slots["base"];
 
@@ -48,7 +49,7 @@ const CenterBowl: React.FC = () => {
       {/* Icon buttons above bowl */}
       <div className="flex gap-4 mb-3">
         <button
-          onClick={() => alert('Feature coming soon!')}
+          onClick={() => undo()} // 👈 vaihdettu
           className="text-xl p-2 rounded-lg hover:bg-gray-100 transition-colors"
           title="Undo"
         >
