@@ -27,6 +27,7 @@ export interface Ingredient extends BaseType {
   wedge_image_url?: string;
 }
 
+
 export interface User {
   id: number;
   email: string;
