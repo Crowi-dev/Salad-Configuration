@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import LoginModal from "./LoginModal";
 import { useAuthStore } from "../store/useAuthStore";
 import fresselogo from "../assets/fresse-logo.png";
