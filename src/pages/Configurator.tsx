@@ -77,7 +77,10 @@ const Configurator: React.FC = () => {
 
       <main className="grow p-6">
         {isLoading ? (
-          <p>Loading...</p>
+          // spinneri ladatessa dataa
+          <div className="flex items-center justify-center h-96">
+            <div className="w-12 h-12 border-4 border-[#A2D135] border-t-transparent rounded-full animate-spin" />
+          </div>
         ) : (
           <>
             <div className="flex flex-col lg:flex-row gap-6 justify-between items-stretch">
