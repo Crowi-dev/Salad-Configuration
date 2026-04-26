@@ -7,13 +7,14 @@ const CenterBowl: React.FC = () => {
   const slots = useIngredientStore((state) => state.slots);
   const selectedBowl = useIngredientStore((state) => state.selectedBowl);
   const clearSelection = useIngredientStore((state) => state.clearSelection);
+  const clearSlot = useIngredientStore((state) => state.clearSlot); // 👈 lisätty
 
-  const activeIngredients = Object.values(slots).filter(
-    (i): i is NonNullable<typeof i> => i !== null
-  );
-
-  // haetaan pohjan kuva storesta
   const baseIngredient = slots["base"];
+
+  // slotit ilman base-kerrosta
+  const ingredientSlots = Object.entries(slots).filter(
+    ([key]) => key !== "base"
+  );
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center min-h-100 mt-4 lg:mt-0">
@@ -30,7 +31,6 @@ const CenterBowl: React.FC = () => {
         >
           Salaatti
         </button>
-
         <button
           onClick={() => setBaseType(2)}
           className={`px-4 py-2 rounded-lg font-bold transition-colors ${
@@ -41,7 +41,6 @@ const CenterBowl: React.FC = () => {
         >
           Rahka
         </button>
-
         <span>🥗</span>
         <span>🥣</span>
       </div>
@@ -75,10 +74,10 @@ const CenterBowl: React.FC = () => {
         </button>
       </div>
 
-      {/* Bowl - position relative et absoluuttiset kuvat pysyy sisällä */}
+      {/* Bowl */}
       <div className="relative w-80 h-80 rounded-full border-4 border-gray-200 bg-gray-50 shadow-inner overflow-hidden">
 
-        {/* Pohjan kuva z-10 - näkyy taustalla */}
+        {/* Pohjan kuva z-10 */}
         {baseIngredient?.image_url && (
           <img
             src={baseIngredient.image_url}
@@ -87,7 +86,7 @@ const CenterBowl: React.FC = () => {
           />
         )}
 
-        {/* Divider kuva z-20 - näkyy pohjan päällä */}
+        {/* Divider z-20 */}
         {selectedBowl?.wedge_image_url && (
           <img
             src={selectedBowl.wedge_image_url}
@@ -96,21 +95,32 @@ const CenterBowl: React.FC = () => {
           />
         )}
 
-        {/* Ainesosat z-30 - näkyy päällimmäisenä */}
-        <div className="absolute inset-0 z-30 flex flex-wrap items-center justify-center gap-2 p-4">
-          {activeIngredients.length === 0 ? (
-            <span className="text-gray-400">Kulho on tyhjä</span>
-          ) : (
-            activeIngredients.map((ingredient) => (
-              <span
-                key={ingredient.id}
-                className="px-3 py-1 bg-green-200 text-green-800 rounded-full text-sm"
+        {/* Ainesosat wedge-kuvina z-30 */}
+        {ingredientSlots.map(([slotKey, ingredient]) =>
+          ingredient?.wedge_image_url ? (
+            <div key={slotKey} className="absolute inset-0 z-30">
+              <img
+                src={ingredient.wedge_image_url}
+                alt={ingredient.name}
+                className="w-full h-full object-cover"
+              />
+              {/* X-nappi poistaa slotin */}
+              <button
+                onClick={() => clearSlot(slotKey)}
+                className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold hover:bg-red-700"
               >
-                {ingredient.name}
-              </span>
-            ))
-          )}
-        </div>
+                ×
+              </button>
+            </div>
+          ) : null
+        )}
+
+        {/* Tyhjä teksti */}
+        {ingredientSlots.every(([, i]) => i === null) && !baseIngredient && (
+          <div className="absolute inset-0 z-30 flex items-center justify-center">
+            <span className="text-gray-400">Kulho on tyhjä</span>
+          </div>
+        )}
       </div>
 
       {/* Info */}
