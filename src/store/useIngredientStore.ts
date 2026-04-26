@@ -12,6 +12,7 @@ interface IngredientStore {
 
   addIngredient: (item: Ingredient) => void;
   removeIngredient: (id: number) => void;
+  clearSlot: (slotKey: string) => void; // 👈 lisätty
 }
 
 export const useIngredientStore = create<IngredientStore>((set) => ({
@@ -67,15 +68,16 @@ export const useIngredientStore = create<IngredientStore>((set) => ({
   removeIngredient: (id) =>
     set((state) => {
       const newSlots = { ...state.slots };
-
       const keyToRemove = Object.keys(newSlots).find(
         (key) => newSlots[key]?.id === id
       );
-
-      if (keyToRemove) {
-        newSlots[keyToRemove] = null;
-      }
-
+      if (keyToRemove) newSlots[keyToRemove] = null;
       return { slots: newSlots };
     }),
+
+  // tyhjentää slotin suoraan avaimella
+  clearSlot: (slotKey) =>
+    set((state) => ({
+      slots: { ...state.slots, [slotKey]: null },
+    })),
 }));
