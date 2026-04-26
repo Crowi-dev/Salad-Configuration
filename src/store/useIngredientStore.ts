@@ -3,6 +3,7 @@ import { type Ingredient, type Bowl } from "../types";
 
 interface IngredientStore {
   slots: Record<string, Ingredient | null>;
+  history: Record<string, Ingredient | null>[]; // 👈 lisätty
   baseType: number;
   selectedBowl: Bowl | null;
 
@@ -12,11 +13,13 @@ interface IngredientStore {
 
   addIngredient: (item: Ingredient) => void;
   removeIngredient: (id: number) => void;
-  clearSlot: (slotKey: string) => void; // 👈 lisätty
+  clearSlot: (slotKey: string) => void;
+  undo: () => void; // 👈 lisätty
 }
 
 export const useIngredientStore = create<IngredientStore>((set) => ({
   slots: {},
+  history: [], // 👈 lisätty
   baseType: 1,
   selectedBowl: null,
 
@@ -24,12 +27,15 @@ export const useIngredientStore = create<IngredientStore>((set) => ({
   setBowl: (bowl) => set({ selectedBowl: bowl }),
 
   clearSelection: () =>
-    set({ slots: {}, baseType: 1, selectedBowl: null }),
+    set({ slots: {}, history: [], baseType: 1, selectedBowl: null }),
 
   addIngredient: (item) =>
     set((state) => {
       if (item.categoryId === 6) {
-        return { slots: { ...state.slots, base: item } };
+        return {
+          history: [...state.history, state.slots], // tallennetaan historia
+          slots: { ...state.slots, base: item },
+        };
       }
 
       const slotCount = state.selectedBowl?.slot_count;
@@ -45,7 +51,11 @@ export const useIngredientStore = create<IngredientStore>((set) => ({
       }
 
       if (!targetSlotKey) return state;
-      return { slots: { ...state.slots, [targetSlotKey]: item } };
+
+      return {
+        history: [...state.history, state.slots], // tallennetaan historia
+        slots: { ...state.slots, [targetSlotKey]: item },
+      };
     }),
 
   removeIngredient: (id) =>
@@ -58,9 +68,20 @@ export const useIngredientStore = create<IngredientStore>((set) => ({
       return { slots: newSlots };
     }),
 
-  // tyhjentää slotin suoraan avaimella
   clearSlot: (slotKey) =>
     set((state) => ({
+      history: [...state.history, state.slots], // tallennetaan historia
       slots: { ...state.slots, [slotKey]: null },
     })),
+
+  // palataan edelliseen tilanteeseen
+  undo: () =>
+    set((state) => {
+      if (state.history.length === 0) return state;
+      const previous = state.history[state.history.length - 1];
+      return {
+        slots: previous,
+        history: state.history.slice(0, -1),
+      };
+    }),
 }));
