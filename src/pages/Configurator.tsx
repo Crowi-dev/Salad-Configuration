@@ -49,7 +49,6 @@ const Configurator: React.FC = () => {
           getBaseIngredients(),
         ]);
 
-        // Deduplicate by id
         const uniqueIngredients = ingredientsData.filter(
           (item: Ingredient, index: number, self: Ingredient[]) =>
             index === self.findIndex((i) => i.id === item.id)
@@ -84,7 +83,14 @@ const Configurator: React.FC = () => {
             <div className="flex flex-col lg:flex-row gap-6 justify-between items-stretch">
               <BowlSelection bowls={bowls} />
               <CenterBowl />
-              <BaseSelection ingredients={baseIngredients} />
+              {/* piilotetaan BaseSelection ku Rahka valittuna */}
+              {baseType === 1 ? (
+                <BaseSelection ingredients={baseIngredients} />
+              ) : (
+                <div className="bg-zinc-800 rounded-[3rem] p-6 text-white w-full lg:w-1/4 flex flex-col items-center justify-center shadow-lg">
+                  <p className="text-gray-400 text-center">No base options for quark</p>
+                </div>
+              )}
             </div>
 
             <div className="mt-8">
