@@ -21,32 +21,21 @@ export const useIngredientStore = create<IngredientStore>((set) => ({
   selectedBowl: null,
 
   setBaseType: (id) => set({ baseType: id }),
-
   setBowl: (bowl) => set({ selectedBowl: bowl }),
 
   clearSelection: () =>
-    set({
-      slots: {},
-      baseType: 1,
-      selectedBowl: null,
-    }),
+    set({ slots: {}, baseType: 1, selectedBowl: null }),
 
   addIngredient: (item) =>
     set((state) => {
       if (item.categoryId === 6) {
-        return {
-          slots: {
-            ...state.slots,
-            base: item,
-          },
-        };
+        return { slots: { ...state.slots, base: item } };
       }
 
       const slotCount = state.selectedBowl?.slot_count;
       if (!slotCount) return state;
 
       let targetSlotKey: string | null = null;
-
       for (let i = 1; i <= slotCount; i++) {
         const key = `slot-${i}`;
         if (!state.slots[key]) {
@@ -56,13 +45,7 @@ export const useIngredientStore = create<IngredientStore>((set) => ({
       }
 
       if (!targetSlotKey) return state;
-
-      return {
-        slots: {
-          ...state.slots,
-          [targetSlotKey]: item,
-        },
-      };
+      return { slots: { ...state.slots, [targetSlotKey]: item } };
     }),
 
   removeIngredient: (id) =>
