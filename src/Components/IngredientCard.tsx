@@ -17,15 +17,12 @@ const IngredientCard: React.FC<Props> = ({ ingredient }) => {
 
   const priceItem = prices.find((p) => p.item_id === ingredient.id);
 
-  // draggable hookki
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: `ingredient-${ingredient.id}`,
     data: { ingredient },
   });
 
-  const style = {
-    transform: CSS.Translate.toString(transform),
-  };
+  const style = { transform: CSS.Translate.toString(transform) };
 
   return (
     <button
@@ -34,43 +31,48 @@ const IngredientCard: React.FC<Props> = ({ ingredient }) => {
       {...listeners}
       {...attributes}
       onClick={() => addIngredient(ingredient)}
-      className={`w-36 aspect-square bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition p-4 flex flex-col justify-between text-left cursor-grab active:cursor-grabbing ${
+      className={`bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition flex flex-row items-center gap-3 p-2 text-left cursor-grab active:cursor-grabbing w-full ${
         isDragging ? "opacity-50 z-50 shadow-xl" : ""
       }`}
     >
-      
-      {/* nimen näyttö kortin keskellä */}
-      <div className="flex-1 flex items-center justify-center text-center">
-        <span className="text-sm font-semibold text-gray-800">
+      {ingredient.image_url ? (
+        <img
+          src={ingredient.image_url}
+          alt={ingredient.name}
+          className="w-14 h-14 rounded-lg object-cover shrink-0"
+        />
+      ) : (
+        <div className="w-14 h-14 rounded-lg bg-gray-100 shrink-0" />
+      )}
+
+      <div className="flex flex-col flex-1 min-w-0">
+        <span className="text-sm font-semibold text-gray-800 truncate">
           {ingredient.name}
         </span>
-      </div>
 
-      {/* hinta */}
-      <div className="text-center text-xs font-medium mt-1">
-        {token ? (
-          priceItem ? (
-            <span className="text-green-700">+ {priceItem.price.toFixed(2)} €</span>
+        <span className="text-xs mt-0.5">
+          {token ? (
+            priceItem ? (
+              <span className="text-green-700">+ {priceItem.price.toFixed(2)} €</span>
+            ) : (
+              <span className="text-gray-400">-</span>
+            )
           ) : (
-            <span className="text-gray-400">No price available</span>
-          )
-        ) : (
-          <span className="text-gray-400 italic">Login to see price</span>
-        )}
-      </div>
+            <span className="text-gray-400 italic">Login to see price</span>
+          )}
+        </span>
 
-      {/* loopataan dieettitägit ja näytetään ne */}
-      <div className="flex justify-center gap-1 flex-wrap">
-        {ingredient.diets.map((diet) => (
-          <span
-            key={diet}
-            className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-medium"
-          >
-            {diet}
-          </span>
-        ))}
+        <div className="flex gap-1 flex-wrap mt-1">
+          {ingredient.diets.map((diet) => (
+            <span
+              key={diet}
+              className="text-xs px-1.5 py-0.5 rounded-full bg-green-100 text-green-700 font-medium"
+            >
+              {diet}
+            </span>
+          ))}
+        </div>
       </div>
-
     </button>
   );
 };
