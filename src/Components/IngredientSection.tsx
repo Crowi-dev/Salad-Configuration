@@ -72,6 +72,13 @@ const IngredientSection: React.FC<Props> = ({ categories, ingredients }) => {
         ))}
       </div>
 
+      {/* Diet legend - selitys dieettimerkeille */}
+      <div className="mt-6 flex gap-4 text-sm text-gray-300">
+        <span><span className="font-bold text-white">G</span> = Gluteeniton</span>
+        <span><span className="font-bold text-white">L</span> = Laktoositon</span>
+        <span><span className="font-bold text-white">V</span> = Vegaani</span>
+      </div>
+
     </div>
   );
 };
