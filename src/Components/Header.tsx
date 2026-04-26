@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import LoginModal from "./LoginModal";
 import { useAuthStore } from "../store/useAuthStore";
+import fresselogo from "../assets/fresse-logo.png";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,12 +13,12 @@ const Header = () => {
   return (
     <div className="bg-zinc-800 text-white w-full h-32 flex justify-between items-start px-8 pt-4 relative">
       
-      {/* Logo */}
-      <p className="w-24 h-24 rounded-full border-4 border-[#A2D135] flex items-center justify-center flex-col -mt-2 bg-zinc-800 shadow-lg">
-        <span className="text-[10px] leading-tight text-center">
-          Fresh Food Factory
-        </span>
-      </p>
+      {/* Logo - vaihdettu oikeaan Fresse logoon */}
+      <img
+        src={fresselogo}
+        alt="Fresse logo"
+        className="w-24 h-24 rounded-full object-contain shadow-lg -mt-2"
+      />
 
       {/* Title */}
       <h1 className="text-3xl font-black tracking-widest mt-6">
@@ -44,9 +45,7 @@ const Header = () => {
             bg-[#A2D135] text-black
             rounded-b-3xl rounded-t-xl
             px-6 py-4 flex flex-col gap-2 min-w-[200px] shadow-md
-
             transform transition-all duration-200 origin-top
-
             ${isMenuOpen 
               ? "opacity-100 scale-100 pointer-events-auto" 
               : "opacity-0 scale-95 pointer-events-none"}
@@ -54,7 +53,7 @@ const Header = () => {
         >
           {userName ? (
             <>
-              {/* Logged in state */}
+              {/* Kirjautunut sisään */}
               <p className="font-semibold">Hei, {userName}!</p>
               <button
                 onClick={() => {
@@ -67,7 +66,6 @@ const Header = () => {
               </button>
             </>
           ) : (
-            /* Logged out state */
             <button
               onClick={() => {
                 setIsLoginOpen(true);
