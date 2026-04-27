@@ -1,5 +1,5 @@
 import React from "react";
-import { useDroppable } from '@dnd-kit/core'; 
+import { useDroppable } from '@dnd-kit/core';
 import { useIngredientStore } from "../store/useIngredientStore";
 
 const CenterBowl: React.FC = () => {
@@ -11,7 +11,6 @@ const CenterBowl: React.FC = () => {
   const clearSlot = useIngredientStore((state) => state.clearSlot);
   const undo = useIngredientStore((state) => state.undo);
 
-  // bowl on droppable alue
   const { setNodeRef, isOver } = useDroppable({ id: 'bowl-drop' });
 
   const baseIngredient = slots["base"];
@@ -49,7 +48,7 @@ const CenterBowl: React.FC = () => {
         <span>🥣</span>
       </div>
 
-      {/* Icon buttons above bowl */}
+      {/* Icon buttons */}
       <div className="flex gap-4 mb-3">
         <button
           onClick={() => undo()}
@@ -78,15 +77,26 @@ const CenterBowl: React.FC = () => {
         </button>
       </div>
 
-      {/* Bowl - useDroppable ref ja isOver highlight */}
+      {/* Bowl */}
       <div
         ref={setNodeRef}
-        className={`relative w-80 h-80 rounded-full border-4 shadow-inner overflow-hidden transition-colors ${
+        className={`relative w-80 h-80 shadow-inner overflow-hidden transition-colors border-4 ${
+          selectedBowl?.shape === 'square' ? 'rounded-3xl' : 'rounded-full'
+        } ${
           isOver
             ? "border-[#A2D135] bg-green-50"
             : "border-gray-200 bg-gray-50"
         }`}
       >
+
+        {/* Rasian kuva z-5 */}
+        {selectedBowl?.image_url && (
+          <img
+            src={selectedBowl.image_url}
+            alt={selectedBowl.name}
+            className="absolute inset-0 w-full h-full object-cover z-5"
+          />
+        )}
 
         {/* Pohjan kuva z-10 */}
         {baseIngredient?.image_url && (
@@ -110,27 +120,37 @@ const CenterBowl: React.FC = () => {
           />
         )}
 
-        {/* Ainesosat wedge-kuvina z-30 */}
-        {ingredientSlots.map(([slotKey, ingredient]) =>
-          ingredient?.wedge_image_url ? (
-            <div key={slotKey} className="absolute inset-0 z-30">
+        {/* Ainesosat wedge-kuvina z-30 - kaikki päällekkäin */}
+        <div className="absolute inset-0 z-30">
+          {ingredientSlots.map(([slotKey, ingredient]) =>
+            ingredient?.wedge_image_url ? (
               <img
+                key={slotKey}
                 src={ingredient.wedge_image_url}
                 alt={ingredient.name}
-                className="w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-cover"
               />
+            ) : null
+          )}
+        </div>
+
+        {/* X napit z-40 */}
+        <div className="absolute inset-0 z-40 flex flex-wrap items-start justify-end p-2 gap-1">
+          {ingredientSlots.map(([slotKey, ingredient]) =>
+            ingredient ? (
               <button
+                key={slotKey}
                 onClick={() => clearSlot(slotKey)}
-                className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold hover:bg-red-700"
+                className="bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold hover:bg-red-700"
               >
                 ×
               </button>
-            </div>
-          ) : null
-        )}
+            ) : null
+          )}
+        </div>
 
         {/* Tyhjä teksti */}
-        {ingredientSlots.every(([, i]) => i === null) && !baseIngredient && (
+        {ingredientSlots.every(([, i]) => i === null) && !baseIngredient && !selectedBowl && (
           <div className="absolute inset-0 z-30 flex items-center justify-center">
             <span className="text-gray-400">Pudota ainesosa tähän</span>
           </div>

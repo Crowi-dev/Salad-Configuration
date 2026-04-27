@@ -20,7 +20,7 @@ const BowlSelection: React.FC<BowlSelectionProps> = ({ bowls }) => {
         <h2 className="text-xl font-bold">Valitse rasia</h2>
       </div>
 
-      <div className="w-full flex flex-col gap-4">
+      <div className="w-full flex flex-col gap-3">
         {bowls.map((bowl) => {
           const isSelected = selectedBowl?.id === bowl.id;
 
@@ -28,13 +28,35 @@ const BowlSelection: React.FC<BowlSelectionProps> = ({ bowls }) => {
             <button
               key={bowl.id}
               onClick={() => setBowl(bowl)}
-              className={`h-12 border-2 transition-colors rounded-xl flex items-center px-4 w-full text-left ${
+              className={`border-b pb-2 flex items-center gap-3 w-full text-left transition-colors ${
                 isSelected
-                  ? "border-green-500 bg-green-500/20"
-                  : "border-gray-600 hover:border-gray-400"
+                  ? "border-[#A2D135] text-[#A2D135]"
+                  : "border-gray-600 text-white hover:border-gray-400"
               }`}
             >
-              {bowl.name}
+              {/* bowl kuva vasemmalla */}
+              {bowl.image_url ? (
+                <img
+                  src={bowl.image_url}
+                  alt={bowl.name}
+                  className="w-12 h-12 rounded-lg object-cover shrink-0"
+                />
+              ) : (
+                <div className="w-12 h-12 rounded-lg bg-gray-600 shrink-0" />
+              )}
+
+              {/* nimi ja tilavuus */}
+              <div className="flex flex-col">
+                <span className="text-sm font-semibold">{bowl.name}</span>
+                <span className="text-xs text-gray-400">{bowl.volume} ml</span>
+              </div>
+
+              {/* aktiivinen indikaattori */}
+              <div className={`ml-auto w-5 h-5 border-2 rounded-full flex items-center justify-center shrink-0 ${
+                isSelected ? "border-[#A2D135]" : "border-gray-400"
+              }`}>
+                {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-[#A2D135]" />}
+              </div>
             </button>
           );
         })}
