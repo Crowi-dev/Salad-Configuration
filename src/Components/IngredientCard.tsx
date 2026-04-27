@@ -1,4 +1,6 @@
 import React from 'react';
+import { useDraggable } from '@dnd-kit/core';
+import { CSS } from '@dnd-kit/utilities';
 import { type Ingredient } from '../types';
 import { useIngredientStore } from '../store/useIngredientStore';
 import { usePriceStore } from '../store/usePriceStore';
@@ -13,13 +15,28 @@ const IngredientCard: React.FC<Props> = ({ ingredient }) => {
   const prices = usePriceStore((state) => state.prices);
   const token = useAuthStore((state) => state.token);
 
-
   const priceItem = prices.find((p) => p.item_id === ingredient.id);
+
+  // draggable hookki
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: `ingredient-${ingredient.id}`,
+    data: { ingredient },
+  });
+
+  const style = {
+    transform: CSS.Translate.toString(transform),
+  };
 
   return (
     <button
+      ref={setNodeRef}
+      style={style}
+      {...listeners}
+      {...attributes}
       onClick={() => addIngredient(ingredient)}
-      className="w-36 aspect-square bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition p-4 flex flex-col justify-between text-left cursor-pointer"
+      className={`w-36 aspect-square bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition p-4 flex flex-col justify-between text-left cursor-grab active:cursor-grabbing ${
+        isDragging ? "opacity-50 z-50 shadow-xl" : ""
+      }`}
     >
       
       {/* nimen näyttö kortin keskellä */}
